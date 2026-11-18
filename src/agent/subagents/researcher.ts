@@ -99,10 +99,14 @@ export async function runResearcherAgent(prompt: string, opts: ResearcherRunOpti
 		prompt,
 		engine: opts.engine,
 		systemPrompt: INSTRUCTIONS,
-		// 14 turns of headroom, and a tool-less finalize turn if the model
-		// spends them all searching (2026-11-11: "list every certification…"
-		// questions exhausted 12 turns and returned an empty brief).
-		maxTurns: 14,
+		// 24 turns (the demo-builder's default), and a tool-less finalize turn
+		// if the model spends them all searching. 2026-11-11: "list every
+		// certification…" questions exhausted 12 turns and returned an empty
+		// brief. 2026-11-17: four research jobs on deepseek-v4.1-flash all
+		// used 12/12 turns, and the one that succeeded wrote its brief on the
+		// last turn. Each web_fetch is capped at 40k chars, so 24 turns stays
+		// near 250k tokens in the worst case.
+		maxTurns: 24,
 		finalizePrompt:
 			"You have used all of your research turns. Write the final brief NOW in the required format " +
 			"(Summary / Findings / Sources / Gaps) using only what you already gathered. Do not call tools — " +
